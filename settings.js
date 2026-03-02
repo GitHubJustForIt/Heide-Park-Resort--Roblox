@@ -2,7 +2,7 @@
 
 const HeideParkSettings = {
     // Default webhook URL (replace with your own)
-    DEFAULT_WEBHOOK_URL: "https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN",
+    DEFAULT_WEBHOOK_URL: "https://discordapp.com/api/webhooks/1472624952917364998/dLUkhFwa2ZyEhrNbOHfwyRe3ufr8BtwzgH_kcni2fgtugwfaABMOq3vwdPTzfqJ9Q2OE",
 
     // Get settings from localStorage
     getSettings() {
