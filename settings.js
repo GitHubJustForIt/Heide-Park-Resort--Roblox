@@ -220,7 +220,7 @@ const SETTINGS = {
             "March": {
                 "07": {
                     enabled: true,
-                    bookedUsers: [],
+                    bookedUsers: ["NimmiLo"],
                     pendingUsers: [],
                     soldOut: false,
                     timeslots: {
