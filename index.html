@@ -3,430 +3,415 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heide Park Roblox - Ticket Booking</title>
+    <title>Heide Park Roblox - Premium Theme Park Experience</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- Login Screen -->
-    <div id="loginScreen" class="screen active">
-        <div class="login-background">
-            <div class="gradient-orb orb-1"></div>
-            <div class="gradient-orb orb-2"></div>
-            <div class="gradient-orb orb-3"></div>
-            <div class="particles"></div>
-        </div>
-        
+    <div id="loginScreen" class="login-screen">
+        <div class="login-background"></div>
         <div class="login-container">
-            <div class="login-card">
-                <div class="login-icon">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
+            <div class="login-logo">
+                <h1 class="park-title">
+                    <span class="title-heide">Heide Park</span>
+                    <span class="title-roblox">Roblox</span>
+                </h1>
+                <p class="tagline">Your Premium Adventure Awaits</p>
+            </div>
+            
+            <div class="login-form">
+                <div class="input-group">
+                    <label for="robloxUsername">Roblox Username</label>
+                    <input type="text" id="robloxUsername" placeholder="Enter your Roblox username" required>
                 </div>
-                <h1 class="login-title">Heide Park Roblox</h1>
-                <p class="login-subtitle">Book Your Adventure</p>
                 
-                <form id="loginForm" class="login-form">
-                    <div class="form-group">
-                        <label for="username">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
-                            </svg>
-                            Roblox Username
-                        </label>
-                        <input type="text" id="username" placeholder="Enter your username" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="age">Age (minimum 8)</label>
-                        <input type="number" id="age" placeholder="Enter your age" min="8" required>
-                    </div>
-                    
-                    <div class="form-checkbox">
-                        <input type="checkbox" id="confirmTerms" required>
-                        <label for="confirmTerms">
-                            I confirm that I have read and agree to the booking terms and park rules
-                        </label>
-                    </div>
-                    
-                    <button type="submit" class="btn-primary" id="loginBtn">
-                        <span>Continue to Booking</span>
-                        <div class="spinner hidden"></div>
-                    </button>
-                </form>
+                <div class="input-group">
+                    <label for="userAge">Age</label>
+                    <input type="number" id="userAge" min="8" max="99" placeholder="Minimum 8 years" required>
+                </div>
                 
-                <p class="login-footer">
-                    Your information is stored locally and used only for booking purposes
-                </p>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="confirmTerms">
+                    <label for="confirmTerms">I confirm that all information is correct</label>
+                </div>
+                
+                <button id="loginBtn" class="btn-login">Enter the Park</button>
+                <p class="login-error" id="loginError"></p>
+            </div>
+            
+            <div class="login-decorations">
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
             </div>
         </div>
     </div>
 
-    <!-- Main Screen -->
-    <div id="mainScreen" class="screen">
-        <!-- Top Bar -->
-        <div class="topbar">
-            <div class="topbar-content">
-                <div class="topbar-left">
-                    <div class="logo">HP</div>
-                    <div class="logo-text">
-                        <div class="logo-title">Heide Park Roblox</div>
-                        <div class="logo-subtitle">Booking System</div>
-                    </div>
-                </div>
-                
-                <div class="topbar-right">
-                    <div class="user-badge">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                        <span id="usernameDisplay"></span>
-                    </div>
-                    <button class="btn-logout" id="logoutBtn">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                            <polyline points="16 17 21 12 16 7"></polyline>
-                            <line x1="21" y1="12" x2="9" y2="12"></line>
-                        </svg>
-                        <span>Logout</span>
-                    </button>
+    <!-- Main Website -->
+    <div id="mainWebsite" class="main-website hidden">
+        <!-- Golden Ticket Winner Banner -->
+        <div id="winnerBanner" class="winner-banner hidden">
+            <div class="confetti-container"></div>
+            <div class="winner-content">
+                <h2>🎉 YOU WON THE GOLDEN TICKET! 🎉</h2>
+                <div class="winner-perks">
+                    <p>✨ Private Park Access</p>
+                    <p>🌙 Overnight Stay</p>
+                    <p>👑 Owner Assistance</p>
+                    <p>🍽️ All-Inclusive Food</p>
+                    <p>💎 VIP Treatment</p>
                 </div>
             </div>
         </div>
+
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-container">
+                <div class="logo">
+                    <h2>Heide Park <span>Roblox</span></h2>
+                </div>
+                <nav class="main-nav">
+                    <a href="#home" class="nav-link active">Home</a>
+                    <a href="#booking" class="nav-link">Book Tickets</a>
+                    <a href="#info" class="nav-link">Info</a>
+                </nav>
+                <div class="user-info">
+                    <span id="headerUsername"></span>
+                    <button id="logoutBtn" class="btn-logout">Logout</button>
+                </div>
+            </div>
+        </header>
 
         <!-- Hero Section -->
-        <div class="hero-section">
-            <div class="hero-slider" id="heroSlider">
-                <div class="slider-track" id="sliderTrack"></div>
-                <div class="slider-dots" id="sliderDots"></div>
-            </div>
-            
-            <div class="hero-content">
-                <h1 class="hero-title">
-                    Heide Park<br>
-                    <span class="hero-title-accent">Roblox</span>
-                </h1>
-                <p class="hero-subtitle">Experience the ultimate virtual theme park adventure</p>
-                <button class="btn-hero" id="heroBookBtn">Book Tickets Now</button>
-            </div>
-            
-            <div class="scroll-indicator">
-                <div class="scroll-indicator-track">
-                    <div class="scroll-indicator-dot"></div>
+        <section class="hero-section">
+            <div class="hero-slider">
+                <div class="hero-slide active">
+                    <div class="hero-content">
+                        <h1>Welcome to Heide Park Roblox</h1>
+                        <p>Experience the most thrilling adventures in the virtual world</p>
+                        <button class="btn-hero" onclick="scrollToBooking()">Book Your Visit</button>
+                    </div>
                 </div>
             </div>
-        </div>
+            <div class="hero-overlay"></div>
+        </section>
 
-        <!-- Features Section -->
-        <div class="features-section">
-            <div class="container">
-                <div class="section-header">
-                    <h2>Why Book With Us?</h2>
-                    <p>Join thousands of players in the most exciting virtual theme park</p>
+        <!-- Visitor Counter & Opening Hours -->
+        <section class="info-bar">
+            <div class="info-container">
+                <div class="info-card">
+                    <div class="info-icon">👥</div>
+                    <div class="info-text">
+                        <span class="info-label">Total Visitors</span>
+                        <span class="info-value" id="visitorCount">0</span>
+                    </div>
                 </div>
                 
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
-                        </div>
-                        <h3>Weekend Fun</h3>
-                        <p>Book your spot for exciting weekend adventures</p>
+                <div class="info-card">
+                    <div class="info-icon">🕐</div>
+                    <div class="info-text">
+                        <span class="info-label">Opening Hours</span>
+                        <span class="info-value">10:00 - 22:00</span>
                     </div>
-                    
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                            </svg>
-                        </div>
-                        <h3>Limited Spots</h3>
-                        <p>Only 4 spots available per day - book fast!</p>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            </svg>
-                        </div>
-                        <h3>Secure Booking</h3>
-                        <p>Safe and reliable reservation system</p>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-                            </svg>
-                        </div>
-                        <h3>Amazing Rides</h3>
-                        <p>Experience thrilling attractions and entertainment</p>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-icon">🎢</div>
+                    <div class="info-text">
+                        <span class="info-label">Attractions</span>
+                        <span class="info-value">25+ Rides</span>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- CTA Section -->
-        <div class="cta-section">
-            <div class="container">
-                <h2>Ready for Adventure?</h2>
-                <p>Spots fill up fast! Book your weekend visit today and secure your place</p>
-                <button class="btn-cta" id="ctaBookBtn">Select Your Date Below ↓</button>
+        <!-- Fun Fact Section -->
+        <section class="fun-fact-section">
+            <div class="fun-fact-container">
+                <div class="fun-fact-icon">💡</div>
+                <p id="funFactText" class="fun-fact-text"></p>
             </div>
-        </div>
+        </section>
 
-        <!-- Calendar Section -->
-        <div class="calendar-section" id="calendarSection">
-            <div class="container">
-                <div class="calendar-card">
-                    <div class="calendar-header">
-                        <div class="calendar-title-group">
-                            <div class="calendar-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                                </svg>
-                            </div>
-                            <div>
-                                <h2>Select Your Date</h2>
-                                <p>Weekends only • 2 weeks in advance</p>
-                            </div>
-                        </div>
-                        
-                        <div class="calendar-navigation">
-                            <button class="btn-nav" id="prevMonth">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="15 18 9 12 15 6"></polyline>
-                                </svg>
-                            </button>
-                            <div class="calendar-current">
-                                <div class="calendar-month" id="currentMonth">March</div>
-                                <div class="calendar-year" id="currentYear">2026</div>
-                            </div>
-                            <button class="btn-nav" id="nextMonth">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="9 18 15 12 9 6"></polyline>
-                                </svg>
-                            </button>
-                        </div>
+        <!-- Features Section -->
+        <section class="features-section">
+            <div class="section-container">
+                <h2 class="section-title">Why Visit Us?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🎢</div>
+                        <h3>Thrilling Rides</h3>
+                        <p>Experience adrenaline-pumping roller coasters</p>
                     </div>
-                    
-                    <div class="calendar-weekdays">
-                        <div>Sun</div>
-                        <div>Mon</div>
-                        <div>Tue</div>
-                        <div>Wed</div>
-                        <div>Thu</div>
-                        <div>Fri</div>
-                        <div>Sat</div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎭</div>
+                        <h3>Live Shows</h3>
+                        <p>Enjoy spectacular performances daily</p>
                     </div>
-                    
-                    <div class="calendar-grid" id="calendarGrid"></div>
-                    
-                    <div class="calendar-legend">
-                        <div class="legend-item">
-                            <div class="legend-box available"></div>
-                            <span>Available</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-box booked"></div>
-                            <span>Your Booking</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-box full"></div>
-                            <span>Fully Booked</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-box unavailable"></div>
-                            <span>Unavailable</span>
-                        </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🍕</div>
+                        <h3>Delicious Food</h3>
+                        <p>Variety of dining options available</p>
                     </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">👨‍👩‍👧‍👦</div>
+                        <h3>Family Friendly</h3>
+                        <p>Fun for all ages and groups</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- News Section -->
+        <section class="news-section">
+            <div class="section-container">
+                <h2 class="section-title">Latest News</h2>
+                <div class="news-grid">
+                    <div class="news-card">
+                        <div class="news-badge">NEW</div>
+                        <h3>New Roller Coaster Opening Soon!</h3>
+                        <p>Get ready for the most extreme ride experience</p>
+                    </div>
+                    <div class="news-card">
+                        <div class="news-badge">EVENT</div>
+                        <h3>Summer Festival 2026</h3>
+                        <p>Special events and shows throughout the season</p>
+                    </div>
+                    <div class="news-card">
+                        <div class="news-badge">UPDATE</div>
+                        <h3>Extended Opening Hours</h3>
+                        <p>Now open until 10 PM on weekends</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tips Section -->
+        <section class="tips-section">
+            <div class="section-container">
+                <h2 class="section-title">Visitor Tips</h2>
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <span class="tip-number">1</span>
+                        <p>Arrive early to beat the queues</p>
+                    </div>
+                    <div class="tip-card">
+                        <span class="tip-number">2</span>
+                        <p>Download the park map before your visit</p>
+                    </div>
+                    <div class="tip-card">
+                        <span class="tip-number">3</span>
+                        <p>Book your tickets in advance</p>
+                    </div>
+                    <div class="tip-card">
+                        <span class="tip-number">4</span>
+                        <p>Stay hydrated throughout the day</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Booking Section -->
+        <section id="booking" class="booking-section">
+            <div class="section-container">
+                <h2 class="section-title">Book Your Visit</h2>
+                
+                <!-- Pending Bookings Display -->
+                <div id="pendingBookings" class="pending-container hidden">
+                    <div class="pending-card">
+                        <div class="pending-header">
+                            <h3>⏳ Pending Booking</h3>
+                            <span class="pending-badge">Awaiting Approval</span>
+                        </div>
+                        <p id="pendingInfo"></p>
+                    </div>
+                </div>
+
+                <!-- Confirmed Bookings Display -->
+                <div id="confirmedBookings" class="confirmed-container hidden">
+                    <div class="confirmed-card">
+                        <div class="confirmed-header">
+                            <h3>✅ Confirmed Booking</h3>
+                            <span class="confirmed-badge">Approved</span>
+                        </div>
+                        <p id="confirmedInfo"></p>
+                    </div>
+                </div>
+                
+                <!-- Calendar -->
+                <div class="calendar-controls">
+                    <select id="monthSelect" class="calendar-select">
+                        <option value="0">January</option>
+                        <option value="1">February</option>
+                        <option value="2">March</option>
+                        <option value="3">April</option>
+                        <option value="4">May</option>
+                        <option value="5">June</option>
+                        <option value="6">July</option>
+                        <option value="7">August</option>
+                        <option value="8">September</option>
+                        <option value="9">October</option>
+                        <option value="10">November</option>
+                        <option value="11">December</option>
+                    </select>
+                    <select id="yearSelect" class="calendar-select">
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                    </select>
+                </div>
+                
+                <div id="calendar" class="calendar"></div>
+            </div>
+        </section>
+
+        <!-- Golden Ticket Section -->
+        <div id="goldenTicketSection" class="golden-ticket-section hidden">
+            <div class="golden-ticket-container">
+                <div class="golden-particles">
+                    <div class="gold-particle"></div>
+                    <div class="gold-particle"></div>
+                    <div class="gold-particle"></div>
+                    <div class="gold-particle"></div>
+                    <div class="gold-particle"></div>
+                    <div class="gold-particle"></div>
+                </div>
+                <div class="golden-ticket-content">
+                    <h2 class="golden-title">🌟 GOLDEN TICKET EVENT 🌟</h2>
+                    <p class="golden-subtitle">Ultra Rare Opportunity - One Winner Only</p>
+                    <button id="claimGoldenBtn" class="btn-golden">Claim Golden Ticket</button>
                 </div>
             </div>
         </div>
 
         <!-- Footer -->
-        <footer class="footer">
-            <div class="container">
-                <h3>Heide Park Roblox</h3>
-                <p>The ultimate virtual theme park experience</p>
-                <p class="footer-copy">© 2026 Heide Park Roblox. All rights reserved.</p>
-                <p class="footer-admin">Press Ctrl+Shift+A for admin panel</p>
+        <footer class="main-footer">
+            <div class="footer-container">
+                <div class="footer-section">
+                    <h3>Heide Park Roblox</h3>
+                    <p>The ultimate virtual theme park experience</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <a href="#home">Home</a>
+                    <a href="#booking">Booking</a>
+                    <a href="#info">Information</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>Discord & TikTok Support</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Heide Park Roblox. All rights reserved.</p>
             </div>
         </footer>
     </div>
 
-    <!-- Booking Confirmation Modal -->
-    <div id="bookingModal" class="modal">
-        <div class="modal-backdrop"></div>
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <div>
-                    <h2>Confirm Your Booking</h2>
-                    <p class="modal-date" id="modalDate"></p>
+                <h2>Complete Your Booking</h2>
+                <button class="modal-close" onclick="closeBookingModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="booking-step">
+                    <div class="input-group">
+                        <label>Roblox Username</label>
+                        <input type="text" id="bookingUsername" placeholder="Confirm your username" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Contact (Required)</label>
+                        <select id="contactType" class="contact-select">
+                            <option value="">Select Platform</option>
+                            <option value="discord">Discord</option>
+                            <option value="tiktok">TikTok</option>
+                        </select>
+                        <input type="text" id="contactUsername" placeholder="Enter your username" required>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="acceptRules">
+                        <label for="acceptRules">I accept the booking rules and conditions</label>
+                    </div>
+                    
+                    <div class="booking-info">
+                        <p><strong>Selected Date:</strong> <span id="selectedDate"></span></p>
+                    </div>
                 </div>
-                <button class="btn-close" id="closeModal">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeBookingModal()">Cancel</button>
+                <button id="confirmBookingBtn" class="btn-confirm">Confirm Booking</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Golden Ticket Modal -->
+    <div id="goldenModal" class="modal golden-modal hidden">
+        <div class="modal-content golden-modal-content">
+            <div class="golden-modal-particles">
+                <div class="gold-shimmer"></div>
+                <div class="gold-shimmer"></div>
+                <div class="gold-shimmer"></div>
             </div>
             
-            <div class="modal-body" id="modalBody">
-                <form id="confirmForm">
-                    <div class="form-group">
-                        <label for="confirmUsername">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
-                            </svg>
-                            Re-enter your Roblox username
-                        </label>
-                        <input type="text" id="confirmUsername" placeholder="Confirm username" required>
-                    </div>
-                    
-                    <div class="captcha-box">
-                        <input type="checkbox" id="captcha" required>
-                        <label for="captcha">
-                            <strong>I'm not a robot</strong>
-                            <div class="captcha-subtitle">CAPTCHA verification</div>
-                        </label>
-                    </div>
-                    
-                    <div class="terms-group">
-                        <div class="terms-title">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                                <line x1="12" y1="9" x2="12" y2="13"></line>
-                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                            </svg>
-                            Please accept all terms:
-                        </div>
-                        
-                        <div class="term-item">
-                            <input type="checkbox" id="term1" required>
-                            <label for="term1">No refunds allowed</label>
-                        </div>
-                        
-                        <div class="term-item">
-                            <input type="checkbox" id="term2" required>
-                            <label for="term2">No rescheduling allowed</label>
-                        </div>
-                        
-                        <div class="term-item">
-                            <input type="checkbox" id="term3" required>
-                            <label for="term3">No ticket transfers allowed</label>
-                        </div>
-                        
-                        <div class="term-item">
-                            <input type="checkbox" id="term4" required>
-                            <label for="term4">I agree to follow all park rules and regulations</label>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="btn-primary">Confirm Booking</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Loading Modal -->
-    <div id="loadingModal" class="modal">
-        <div class="modal-backdrop"></div>
-        <div class="modal-content modal-loading">
-            <div class="loading-spinner"></div>
-            <h3>Processing Your Booking...</h3>
-            <p>Please wait while we confirm your reservation</p>
-        </div>
-    </div>
-
-    <!-- Success Modal -->
-    <div id="successModal" class="modal">
-        <div class="modal-backdrop"></div>
-        <div class="modal-content modal-success">
-            <div class="success-icon">
-                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-            </div>
-            <h3>Booking Confirmed!</h3>
-            <p id="successMessage"></p>
-        </div>
-    </div>
-
-    <!-- Admin Panel -->
-    <div id="adminPanel" class="modal">
-        <div class="modal-backdrop"></div>
-        <div class="modal-content modal-admin">
-            <div class="admin-header">
-                <div class="admin-title-group">
-                    <div class="admin-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="3"></circle>
-                            <path d="M12 1v6m0 6v6m4.22-13.78l-8.44 8.44m0-8.44l8.44 8.44"></path>
-                        </svg>
-                    </div>
-                    <h2>Admin Panel</h2>
-                </div>
-                <button class="btn-close" id="closeAdmin">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
+            <div id="goldenStep1" class="golden-step">
+                <h2 class="golden-modal-title">✨ CLAIM GOLDEN TICKET ✨</h2>
+                <p class="golden-modal-subtitle">This is an ultra-rare legendary opportunity</p>
+                <button id="goldenContinue1" class="btn-golden">Continue</button>
             </div>
             
-            <div class="admin-body">
-                <div class="admin-settings">
-                    <h3>Settings</h3>
-                    
-                    <div class="form-group">
-                        <label for="maxSlots">Max Slots Per Day</label>
-                        <input type="number" id="maxSlots" min="1" max="20" value="4">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="webhookUrl">Discord Webhook URL</label>
-                        <input type="text" id="webhookUrl" placeholder="https://discord.com/api/webhooks/...">
-                    </div>
-                    
-                    <button class="btn-save" id="saveSettings">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                            <polyline points="7 3 7 8 15 8"></polyline>
-                        </svg>
-                        Save Settings
-                    </button>
-                </div>
-                
-                <div class="admin-bookings">
-                    <h3>All Bookings <span id="bookingsCount">(0)</span></h3>
-                    <div id="bookingsList"></div>
-                </div>
+            <div id="goldenStep2" class="golden-step hidden">
+                <h3>Select Your Golden Event Date</h3>
+                <div id="goldenCalendar" class="golden-calendar"></div>
+                <button id="goldenContinue2" class="btn-golden hidden">Claim This Date</button>
             </div>
+            
+            <div id="goldenStep3" class="golden-step hidden">
+                <h3>Complete Your Golden Ticket Claim</h3>
+                <div class="input-group">
+                    <label>Contact (Required)</label>
+                    <select id="goldenContactType" class="contact-select">
+                        <option value="">Select Platform</option>
+                        <option value="discord">Discord</option>
+                        <option value="tiktok">TikTok</option>
+                    </select>
+                    <input type="text" id="goldenContactUsername" placeholder="Enter your username" required>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="goldenAcceptRules">
+                    <label for="goldenAcceptRules">I understand this is pending approval and one winner will be selected</label>
+                </div>
+                <button id="goldenConfirm" class="btn-golden">Submit Golden Ticket Claim</button>
+            </div>
+            
+            <div id="goldenStep4" class="golden-step hidden">
+                <div class="golden-success">
+                    <h2>⏳ Please Wait</h2>
+                    <p>This action will be resolved soon.</p>
+                    <p>The winner will be announced.</p>
+                    <p class="golden-pending-note">Your claim is now <strong>PENDING</strong></p>
+                </div>
+                <button class="btn-golden" onclick="closeGoldenModal()">Close</button>
+            </div>
+            
+            <button class="modal-close golden-close" onclick="closeGoldenModal()">&times;</button>
         </div>
     </div>
 
-    <!-- Toast Container -->
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loader">
+            <div class="loader-circle"></div>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
     <div id="toastContainer" class="toast-container"></div>
 
     <script src="settings.js"></script>
