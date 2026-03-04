@@ -1,823 +1,592 @@
-// Main Script for Heide Park Roblox Booking System
+// ====== MAIN APPLICATION SCRIPT ======
 
-// Global Variables
-let currentUser = null;
-let selectedDate = null;
-let selectedGoldenDate = null;
-let currentCalendarMonth = new Date().getMonth();
-let currentCalendarYear = new Date().getFullYear();
+class App {
+    constructor() {
+        this.currentUser = null;
+        this.currentPage = 'home';
+        this.calendarSystem = null;
+        this.bookingSystem = null;
+        this.goldenSystem = null;
+    }
 
-// Initialize Application
-document.addEventListener('DOMContentLoaded', function() {
-    // Check if user is already logged in
-    const savedUser = localStorage.getItem('heideParkUser');
-    
-    if (savedUser) {
-        currentUser = JSON.parse(savedUser);
-        showMainWebsite();
-    } else {
-        showLoginScreen();
-    }
-    
-    // Setup Event Listeners
-    setupEventListeners();
-});
+    init() {
+        // Check if user is logged in
+        const savedUser = localStorage.getItem('currentUser');
+        if (savedUser) {
+            this.login(savedUser);
+        } else {
+            this.showLoginPage();
+        }
 
-// Setup Event Listeners
-function setupEventListeners() {
-    // Login
-    const loginBtn = document.getElementById('loginBtn');
-    if (loginBtn) {
-        loginBtn.addEventListener('click', handleLogin);
+        this.attachLoginListeners();
     }
-    
-    // Logout
-    const logoutBtn = document.getElementById('logoutBtn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', handleLogout);
-    }
-    
-    // Calendar Controls
-    const monthSelect = document.getElementById('monthSelect');
-    const yearSelect = document.getElementById('yearSelect');
-    
-    if (monthSelect) {
-        monthSelect.addEventListener('change', updateCalendar);
-    }
-    
-    if (yearSelect) {
-        yearSelect.addEventListener('change', updateCalendar);
-    }
-    
-    // Booking Modal
-    const confirmBookingBtn = document.getElementById('confirmBookingBtn');
-    if (confirmBookingBtn) {
-        confirmBookingBtn.addEventListener('click', handleBookingConfirmation);
-    }
-    
-    // Golden Ticket
-    const claimGoldenBtn = document.getElementById('claimGoldenBtn');
-    if (claimGoldenBtn) {
-        claimGoldenBtn.addEventListener('click', startGoldenTicketFlow);
-    }
-    
-    const goldenContinue1 = document.getElementById('goldenContinue1');
-    if (goldenContinue1) {
-        goldenContinue1.addEventListener('click', showGoldenStep2);
-    }
-    
-    const goldenContinue2 = document.getElementById('goldenContinue2');
-    if (goldenContinue2) {
-        goldenContinue2.addEventListener('click', showGoldenStep3);
-    }
-    
-    const goldenConfirm = document.getElementById('goldenConfirm');
-    if (goldenConfirm) {
-        goldenConfirm.addEventListener('click', handleGoldenTicketConfirmation);
-    }
-}
 
-// Login Handler
-function handleLogin() {
-    const username = document.getElementById('robloxUsername').value.trim();
-    const age = parseInt(document.getElementById('userAge').value);
-    const confirmTerms = document.getElementById('confirmTerms').checked;
-    const errorElement = document.getElementById('loginError');
-    
-    // Validation
-    if (!username) {
-        errorElement.textContent = 'Please enter your Roblox username';
-        return;
+    showLoginPage() {
+        document.getElementById('login-page').classList.add('active');
+        document.getElementById('main-app').classList.remove('active');
     }
-    
-    if (!age || age < systemSettings.minAge) {
-        errorElement.textContent = `You must be at least ${systemSettings.minAge} years old`;
-        return;
-    }
-    
-    if (!confirmTerms) {
-        errorElement.textContent = 'Please confirm that all information is correct';
-        return;
-    }
-    
-    // Save user
-    currentUser = {
-        username: username,
-        age: age,
-        loginDate: new Date().toISOString()
-    };
-    
-    localStorage.setItem('heideParkUser', JSON.stringify(currentUser));
-    
-    // Show loading
-    showLoading();
-    
-    setTimeout(() => {
-        hideLoading();
-        showMainWebsite();
-    }, 1500);
-}
 
-// Logout Handler
-function handleLogout() {
-    if (confirm('Are you sure you want to logout?')) {
-        localStorage.removeItem('heideParkUser');
-        currentUser = null;
+    attachLoginListeners() {
+        const loginBtn = document.getElementById('login-btn');
+        const usernameInput = document.getElementById('username-input');
+
+        if (usernameInput) {
+            usernameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.handleLogin();
+                }
+            });
+        }
+
+        if (loginBtn) {
+            loginBtn.addEventListener('click', () => this.handleLogin());
+        }
+    }
+
+    handleLogin() {
+        const input = document.getElementById('username-input');
+        const username = input.value.trim();
+
+        if (!username) {
+            alert(SETTINGS.login.errorEmpty);
+            return;
+        }
+
+        if (username.length < 3) {
+            alert(SETTINGS.login.errorTooShort);
+            return;
+        }
+
+        this.login(username);
+    }
+
+    login(username) {
+        this.currentUser = username;
+        localStorage.setItem('currentUser', username);
+
+        // Hide login, show main app
+        document.getElementById('login-page').classList.remove('active');
+        document.getElementById('main-app').classList.add('active');
+
+        // Update UI
+        document.getElementById('nav-username').textContent = username;
+
+        // Initialize systems
+        this.initSystems();
+        this.attachNavigationListeners();
+        this.loadHomePage();
+        this.checkGoldenTicket();
+    }
+
+    initSystems() {
+        // Initialize calendar
+        this.calendarSystem = new CalendarSystem();
+        this.calendarSystem.loadFromStorage();
+        window.calendarSystem = this.calendarSystem;
+
+        // Initialize booking
+        this.bookingSystem = new BookingSystem();
+        this.bookingSystem.init(this.currentUser);
+        window.bookingSystem = this.bookingSystem;
+
+        // Initialize golden ticket
+        this.goldenSystem = new GoldenTicketSystem();
+        this.goldenSystem.init(this.currentUser);
+        window.goldenSystem = this.goldenSystem;
+    }
+
+    attachNavigationListeners() {
+        // Nav links
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = link.dataset.page;
+                this.navigateToPage(page);
+            });
+        });
+
+        // Data-navigate buttons
+        document.addEventListener('click', (e) => {
+            if (e.target.hasAttribute('data-navigate')) {
+                const page = e.target.getAttribute('data-navigate');
+                this.navigateToPage(page);
+            }
+        });
+
+        // Logout
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => this.logout());
+        }
+    }
+
+    navigateToPage(page) {
+        // Hide all sections
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('active');
+        });
+
+        // Update nav
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
+
+        // Show target section
+        const sectionMap = {
+            'home': 'home-section',
+            'booking': 'booking-section',
+            'golden': 'golden-section',
+            'my-bookings': 'my-bookings-section',
+            'status': 'status-section',
+            'info': 'info-section'
+        };
+
+        const targetSection = document.getElementById(sectionMap[page]);
+        if (targetSection) {
+            targetSection.classList.add('active');
+        }
+
+        this.currentPage = page;
+
+        // Page-specific initializations
+        if (page === 'booking') {
+            this.calendarSystem.init();
+        } else if (page === 'golden') {
+            this.goldenSystem.render();
+        } else if (page === 'my-bookings') {
+            this.bookingSystem.renderMyBookings();
+        }
+    }
+
+    loadHomePage() {
+        // Apply texts
+        document.getElementById('hero-title-1').textContent = SETTINGS.home.heroTitle1;
+        document.getElementById('hero-subtitle-1').textContent = SETTINGS.home.heroSubtitle1;
+
+        // Info cards
+        document.getElementById('info-card-booking-title').textContent = SETTINGS.home.infoCardBookingTitle;
+        document.getElementById('info-card-booking-text').textContent = SETTINGS.home.infoCardBookingText;
+        document.getElementById('info-card-golden-title').textContent = SETTINGS.home.infoCardGoldenTitle;
+        document.getElementById('info-card-golden-text').textContent = SETTINGS.home.infoCardGoldenText;
+        document.getElementById('info-card-secure-title').textContent = SETTINGS.home.infoCardSecureTitle;
+        document.getElementById('info-card-secure-text').textContent = SETTINGS.home.infoCardSecureText;
+
+        // News
+        document.getElementById('news-title').textContent = SETTINGS.home.newsTitle;
+        this.loadNews();
+    }
+
+    loadNews() {
+        const container = document.getElementById('news-container');
+        if (!container) return;
+
+        container.innerHTML = SETTINGS.news.map(item => `
+            <div class="news-card">
+                <h3>${item.title}</h3>
+                <p>${item.text}</p>
+                <small style="color: var(--gray-dark);">${item.date}</small>
+            </div>
+        `).join('');
+    }
+
+    checkGoldenTicket() {
+        if (!SETTINGS.goldenTicket.enabled) {
+            document.getElementById('golden-teaser').style.display = 'none';
+            return;
+        }
+
+        // Check if there are active events
+        const hasActiveEvents = Object.keys(SETTINGS.goldenTicket.events).some(eventDate => {
+            const event = SETTINGS.goldenTicket.events[eventDate];
+            return !event.completed;
+        });
+
+        if (hasActiveEvents) {
+            document.getElementById('golden-teaser').style.display = 'block';
+            document.getElementById('golden-teaser-title').textContent = SETTINGS.home.goldenTeaserTitle;
+            document.getElementById('golden-teaser-text').textContent = SETTINGS.home.goldenTeaserText;
+
+            // Show countdown for nearest event
+            this.updateGoldenCountdown();
+        } else {
+            document.getElementById('golden-teaser').style.display = 'none';
+        }
+    }
+
+    updateGoldenCountdown() {
+        if (!SETTINGS.goldenCountdown.enabled) return;
+
+        // Find nearest event
+        const now = new Date();
+        let nearestEvent = null;
+        let nearestDate = null;
+
+        for (const eventDate in SETTINGS.goldenTicket.events) {
+            const event = SETTINGS.goldenTicket.events[eventDate];
+            if (!event.completed && event.endTime) {
+                const endTime = new Date(event.endTime);
+                if (endTime > now && (!nearestDate || endTime < nearestDate)) {
+                    nearestDate = endTime;
+                    nearestEvent = event;
+                }
+            }
+        }
+
+        if (nearestDate) {
+            const display = document.getElementById('golden-countdown-display');
+            if (display) {
+                const updateCountdown = () => {
+                    const now = new Date();
+                    const diff = nearestDate - now;
+
+                    if (diff <= 0) {
+                        display.textContent = SETTINGS.golden.countdownEnded;
+                        return;
+                    }
+
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                    display.textContent = `${SETTINGS.golden.countdownPrefix}${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                };
+
+                updateCountdown();
+                setInterval(updateCountdown, 1000);
+            }
+        }
+    }
+
+    logout() {
+        localStorage.removeItem('currentUser');
         location.reload();
     }
 }
 
-// Show Login Screen
-function showLoginScreen() {
-    const loginScreen = document.getElementById('loginScreen');
-    const mainWebsite = document.getElementById('mainWebsite');
-    
-    if (loginScreen) loginScreen.classList.remove('hidden');
-    if (mainWebsite) mainWebsite.classList.add('hidden');
-}
-
-// Show Main Website
-function showMainWebsite() {
-    const loginScreen = document.getElementById('loginScreen');
-    const mainWebsite = document.getElementById('mainWebsite');
-    
-    if (loginScreen) loginScreen.classList.add('hidden');
-    if (mainWebsite) mainWebsite.classList.remove('hidden');
-    
-    // Update header with username
-    const headerUsername = document.getElementById('headerUsername');
-    if (headerUsername && currentUser) {
-        headerUsername.textContent = `Welcome, ${currentUser.username}!`;
+// ====== GOLDEN TICKET SYSTEM ======
+class GoldenTicketSystem {
+    constructor() {
+        this.currentUser = null;
+        this.userGoldenBookings = [];
     }
-    
-    // Initialize components
-    initializeComponents();
-}
 
-// Initialize Components
-function initializeComponents() {
-    // Update visitor counter
-    updateVisitorCounter();
-    
-    // Display random fun fact
-    displayRandomFunFact();
-    
-    // Set calendar to current month/year
-    const monthSelect = document.getElementById('monthSelect');
-    const yearSelect = document.getElementById('yearSelect');
-    
-    if (monthSelect) monthSelect.value = currentCalendarMonth;
-    if (yearSelect) yearSelect.value = currentCalendarYear;
-    
-    // Generate calendar
-    updateCalendar();
-    
-    // Check for pending/confirmed bookings
-    checkUserBookings();
-    
-    // Check Golden Ticket status
-    checkGoldenTicketStatus();
-    
-    // Rotate fun facts every 10 seconds
-    setInterval(displayRandomFunFact, 10000);
-}
-
-// Update Visitor Counter
-function updateVisitorCounter() {
-    const visitorCount = document.getElementById('visitorCount');
-    if (visitorCount) {
-        let count = systemSettings.visitorCounterStart;
-        const savedCount = localStorage.getItem('visitorCount');
-        
-        if (savedCount) {
-            count = parseInt(savedCount);
-        } else {
-            localStorage.setItem('visitorCount', count);
-        }
-        
-        // Animate counter
-        animateCounter(visitorCount, count);
+    init(username) {
+        this.currentUser = username;
+        this.loadUserGoldenBookings();
     }
-}
 
-// Animate Counter
-function animateCounter(element, target) {
-    let current = 0;
-    const increment = Math.ceil(target / 50);
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-            current = target;
-            clearInterval(timer);
-        }
-        element.textContent = current.toLocaleString();
-    }, 30);
-}
-
-// Display Random Fun Fact
-function displayRandomFunFact() {
-    const funFactText = document.getElementById('funFactText');
-    if (funFactText && funFacts.length > 0) {
-        const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
-        funFactText.textContent = randomFact;
-        funFactText.style.animation = 'none';
-        setTimeout(() => {
-            funFactText.style.animation = 'fadeIn 1s ease';
-        }, 10);
-    }
-}
-
-// Update Calendar
-function updateCalendar() {
-    const monthSelect = document.getElementById('monthSelect');
-    const yearSelect = document.getElementById('yearSelect');
-    const calendarElement = document.getElementById('calendar');
-    
-    if (!monthSelect || !yearSelect || !calendarElement) return;
-    
-    currentCalendarMonth = parseInt(monthSelect.value);
-    currentCalendarYear = parseInt(yearSelect.value);
-    
-    calendarElement.innerHTML = '';
-    
-    // Get month name
-    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
-                        'July', 'August', 'September', 'October', 'November', 'December'];
-    const monthName = monthNames[currentCalendarMonth];
-    
-    // Get days in month
-    const daysInMonth = new Date(currentCalendarYear, currentCalendarMonth + 1, 0).getDate();
-    
-    // Get today's date
-    const today = new Date();
-    const todayDate = today.getDate();
-    const todayMonth = today.getMonth();
-    const todayYear = today.getFullYear();
-    
-    // Get max booking date (2 weeks ahead)
-    const maxDate = new Date();
-    maxDate.setDate(maxDate.getDate() + systemSettings.maxBookingDaysAhead);
-    
-    // Create calendar days
-    for (let day = 1; day <= daysInMonth; day++) {
-        const dayElement = document.createElement('div');
-        dayElement.className = 'calendar-day';
-        dayElement.textContent = day;
-        
-        const dayStr = day.toString().padStart(2, '0');
-        const dateKey = `${currentCalendarYear}-${(currentCalendarMonth + 1).toString().padStart(2, '0')}-${dayStr}`;
-        const currentDate = new Date(currentCalendarYear, currentCalendarMonth, day);
-        
-        // Check if date is in settings
-        const yearSettings = calendarSettings[currentCalendarYear];
-        const monthSettings = yearSettings ? yearSettings[monthName] : null;
-        const daySettings = monthSettings ? monthSettings[dayStr] : null;
-        
-        // Check if date is in the past
-        if (currentDate < today.setHours(0, 0, 0, 0)) {
-            dayElement.classList.add('disabled');
-        }
-        // Check if date is beyond max booking date
-        else if (currentDate > maxDate) {
-            dayElement.classList.add('disabled');
-        }
-        // Check if date is enabled in settings
-        else if (daySettings && daySettings.enabled) {
-            // Check user's booking status for this date
-            const userBooking = getUserBookingForDate(dateKey);
-            
-            if (userBooking) {
-                if (userBooking.status === 'pending') {
-                    dayElement.classList.add('pending');
-                    dayElement.textContent = `${day} ⏳`;
-                } else if (userBooking.status === 'booked') {
-                    dayElement.classList.add('booked');
-                    dayElement.textContent = `${day} ✓`;
-                }
-            } else if (daySettings.soldOut) {
-                dayElement.classList.add('sold-out');
-                dayElement.textContent = `${day} ✖`;
-            } else {
-                // Available for booking
-                dayElement.addEventListener('click', () => openBookingModal(dateKey));
+    loadUserGoldenBookings() {
+        try {
+            const saved = localStorage.getItem(`golden_${this.currentUser}`);
+            if (saved) {
+                this.userGoldenBookings = JSON.parse(saved);
             }
+        } catch (e) {
+            console.error('Failed to load golden bookings:', e);
+        }
+    }
+
+    saveUserGoldenBookings() {
+        try {
+            localStorage.setItem(`golden_${this.currentUser}`, JSON.stringify(this.userGoldenBookings));
+        } catch (e) {
+            console.error('Failed to save golden bookings:', e);
+        }
+    }
+
+    render() {
+        // Check if user is a winner
+        let isWinner = false;
+        let winnerEventDate = null;
+
+        for (const eventDate in SETTINGS.goldenTicket.events) {
+            const event = SETTINGS.goldenTicket.events[eventDate];
+            if (event.winner === this.currentUser) {
+                isWinner = true;
+                winnerEventDate = eventDate;
+                break;
+            }
+        }
+
+        // Show/hide winner banner
+        const banner = document.getElementById('golden-winner-banner');
+        if (isWinner) {
+            banner.style.display = 'block';
         } else {
-            dayElement.classList.add('disabled');
+            banner.style.display = 'none';
         }
-        
-        calendarElement.appendChild(dayElement);
-    }
-}
 
-// Get User Booking for Date
-function getUserBookingForDate(date) {
-    if (!currentUser) return null;
-    
-    const bookingsKey = `bookings_${currentUser.username}`;
-    const bookings = JSON.parse(localStorage.getItem(bookingsKey) || '[]');
-    
-    return bookings.find(booking => booking.date === date);
-}
+        // Render available events
+        this.renderEvents();
 
-// Check User Bookings
-function checkUserBookings() {
-    if (!currentUser) return;
-    
-    const bookingsKey = `bookings_${currentUser.username}`;
-    const bookings = JSON.parse(localStorage.getItem(bookingsKey) || '[]');
-    
-    const pendingContainer = document.getElementById('pendingBookings');
-    const confirmedContainer = document.getElementById('confirmedBookings');
-    const pendingInfo = document.getElementById('pendingInfo');
-    const confirmedInfo = document.getElementById('confirmedInfo');
-    
-    const pendingBookings = bookings.filter(b => b.status === 'pending' && b.type === 'normal');
-    const confirmedBookings = bookings.filter(b => b.status === 'booked' && b.type === 'normal');
-    
-    if (pendingBookings.length > 0 && pendingContainer && pendingInfo) {
-        const booking = pendingBookings[0];
-        pendingInfo.textContent = `Your booking for ${booking.date} is pending approval. You will be notified once approved.`;
-        pendingContainer.classList.remove('hidden');
-    } else if (pendingContainer) {
-        pendingContainer.classList.add('hidden');
-    }
-    
-    if (confirmedBookings.length > 0 && confirmedContainer && confirmedInfo) {
-        const booking = confirmedBookings[0];
-        confirmedInfo.textContent = `Your booking for ${booking.date} has been confirmed! See you at the park!`;
-        confirmedContainer.classList.remove('hidden');
-    } else if (confirmedContainer) {
-        confirmedContainer.classList.add('hidden');
-    }
-}
+        // Update countdown
+        this.updatePageCountdown();
 
-// Open Booking Modal
-function openBookingModal(date) {
-    selectedDate = date;
-    
-    const modal = document.getElementById('bookingModal');
-    const selectedDateElement = document.getElementById('selectedDate');
-    const bookingUsername = document.getElementById('bookingUsername');
-    
-    if (!modal) return;
-    
-    // Show loading
-    showLoading();
-    
-    setTimeout(() => {
-        hideLoading();
-        
-        if (selectedDateElement) {
-            selectedDateElement.textContent = date;
+        // Attach claim button
+        const claimBtn = document.getElementById('claim-golden-btn');
+        if (claimBtn) {
+            claimBtn.addEventListener('click', () => this.openClaimModal());
         }
-        
-        if (bookingUsername && currentUser) {
-            bookingUsername.value = currentUser.username;
+    }
+
+    renderEvents() {
+        const container = document.getElementById('golden-event-list');
+        if (!container) return;
+
+        const events = Object.keys(SETTINGS.goldenTicket.events).filter(eventDate => {
+            return !SETTINGS.goldenTicket.events[eventDate].completed;
+        });
+
+        if (events.length === 0) {
+            container.innerHTML = `
+                <div class="golden-event-item">
+                    <strong>${SETTINGS.golden.noEventsTitle}</strong>
+                    <p>${SETTINGS.golden.noEventsText}</p>
+                </div>
+            `;
+        } else {
+            container.innerHTML = events.map(eventDate => `
+                <div class="golden-event-item">
+                    <strong>${eventDate}</strong>
+                </div>
+            `).join('');
         }
-        
-        modal.classList.remove('hidden');
-    }, 800);
-}
+    }
 
-// Close Booking Modal
-function closeBookingModal() {
-    const modal = document.getElementById('bookingModal');
-    if (modal) {
-        modal.classList.add('hidden');
-        
-        // Reset form
-        document.getElementById('contactType').value = '';
-        document.getElementById('contactUsername').value = '';
-        document.getElementById('acceptRules').checked = false;
-    }
-}
+    updatePageCountdown() {
+        const display = document.getElementById('golden-page-countdown');
+        if (!display) return;
 
-// Handle Booking Confirmation
-function handleBookingConfirmation() {
-    const username = document.getElementById('bookingUsername').value.trim();
-    const contactType = document.getElementById('contactType').value;
-    const contactUsername = document.getElementById('contactUsername').value.trim();
-    const acceptRules = document.getElementById('acceptRules').checked;
-    
-    // Validation
-    if (!username || username !== currentUser.username) {
-        showToast('Please confirm your username correctly', 'error');
-        return;
+        // Find nearest event
+        const now = new Date();
+        let nearestDate = null;
+
+        for (const eventDate in SETTINGS.goldenTicket.events) {
+            const event = SETTINGS.goldenTicket.events[eventDate];
+            if (!event.completed && event.endTime) {
+                const endTime = new Date(event.endTime);
+                if (endTime > now && (!nearestDate || endTime < nearestDate)) {
+                    nearestDate = endTime;
+                }
+            }
+        }
+
+        if (nearestDate) {
+            const updateCountdown = () => {
+                const now = new Date();
+                const diff = nearestDate - now;
+
+                if (diff <= 0) {
+                    display.textContent = SETTINGS.golden.countdownEnded;
+                    return;
+                }
+
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                display.textContent = `${SETTINGS.golden.countdownPrefix}${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            };
+
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        }
     }
-    
-    if (!contactType) {
-        showToast('Please select a contact platform (Discord or TikTok)', 'error');
-        return;
+
+    openClaimModal() {
+        // Check if user already has an active claim
+        const hasActiveClaim = this.userGoldenBookings.some(b => b.status === 'pending' || b.status === 'winner');
+        if (hasActiveClaim) {
+            window.bookingSystem.showNotification('warning', SETTINGS.errors.goldenActive, SETTINGS.errors.goldenActive);
+            return;
+        }
+
+        const modal = document.getElementById('modal-overlay');
+        const content = document.getElementById('modal-content');
+
+        // Get available events
+        const availableEvents = Object.keys(SETTINGS.goldenTicket.events).filter(eventDate => {
+            return !SETTINGS.goldenTicket.events[eventDate].completed;
+        });
+
+        if (availableEvents.length === 0) {
+            window.bookingSystem.showNotification('info', SETTINGS.golden.noEventsTitle, SETTINGS.golden.noEventsText);
+            return;
+        }
+
+        // Show loading animation
+        window.bookingSystem.showLoading(SETTINGS.golden.modalLoading);
+        
+        setTimeout(() => {
+            window.bookingSystem.hideLoading();
+
+            // Show claim confirmation
+            content.innerHTML = `
+                <div class="modal-header">
+                    <h2>${SETTINGS.golden.modalClaimTitle}</h2>
+                    <button class="modal-close" onclick="window.bookingSystem.closeModal()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--golden); margin: 0 auto 16px;">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    <h3 class="mb-16">${SETTINGS.golden.modalClaimText}</h3>
+                    
+                    <div style="margin: 24px 0;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">${SETTINGS.golden.modalSelectEvent}</label>
+                        <select id="golden-event-select" style="width: 100%; padding: 12px; border: 2px solid var(--gray-medium); border-radius: var(--radius-md); font-size: 16px;">
+                            ${availableEvents.map(date => `<option value="${date}">${date}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-ghost" onclick="window.bookingSystem.closeModal()">${SETTINGS.booking.modalCancel}</button>
+                    <button class="btn-golden" onclick="window.goldenSystem.showContactStep()">${SETTINGS.golden.modalClaimButton}</button>
+                </div>
+            `;
+
+            modal.classList.add('active');
+        }, 1500);
     }
-    
-    if (!contactUsername) {
-        showToast('Please enter your contact username', 'error');
-        return;
+
+    showContactStep() {
+        const selectedEvent = document.getElementById('golden-event-select').value;
+        
+        const content = document.getElementById('modal-content');
+        
+        content.innerHTML = `
+            <div class="modal-header">
+                <h2>${SETTINGS.golden.modalContact}</h2>
+                <button class="modal-close" onclick="window.bookingSystem.closeModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-16">${SETTINGS.booking.modalContactHint}</p>
+                <div class="input-group">
+                    <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <input type="text" id="golden-discord-input" placeholder="${SETTINGS.booking.modalDiscordPlaceholder}">
+                </div>
+                <div class="input-group">
+                    <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                    </svg>
+                    <input type="text" id="golden-tiktok-input" placeholder="${SETTINGS.booking.modalTiktokPlaceholder}">
+                </div>
+                <input type="hidden" id="golden-selected-event" value="${selectedEvent}">
+            </div>
+            <div class="modal-footer">
+                <button class="btn-ghost" onclick="window.bookingSystem.closeModal()">${SETTINGS.booking.modalCancel}</button>
+                <button class="btn-primary" onclick="window.goldenSystem.showRulesStep()">${SETTINGS.booking.modalAccept}</button>
+            </div>
+        `;
     }
-    
-    // Validate contact username format
-    if (contactType === 'discord' && !validateDiscordUsername(contactUsername)) {
-        showToast('Invalid Discord username format', 'error');
-        return;
+
+    showRulesStep() {
+        const discord = document.getElementById('golden-discord-input')?.value.trim();
+        const tiktok = document.getElementById('golden-tiktok-input')?.value.trim();
+        const selectedEvent = document.getElementById('golden-selected-event')?.value;
+
+        if (!discord && !tiktok) {
+            window.bookingSystem.showNotification('error', SETTINGS.errors.contactMissing, SETTINGS.errors.contactMissing);
+            return;
+        }
+
+        const content = document.getElementById('modal-content');
+        
+        content.innerHTML = `
+            <div class="modal-header">
+                <h2>${SETTINGS.golden.modalRules}</h2>
+                <button class="modal-close" onclick="window.bookingSystem.closeModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>${SETTINGS.golden.modalRulesText}</p>
+                <input type="hidden" id="golden-discord-final" value="${discord}">
+                <input type="hidden" id="golden-tiktok-final" value="${tiktok}">
+                <input type="hidden" id="golden-event-final" value="${selectedEvent}">
+            </div>
+            <div class="modal-footer">
+                <button class="btn-ghost" onclick="window.bookingSystem.closeModal()">${SETTINGS.booking.modalCancel}</button>
+                <button class="btn-golden" onclick="window.goldenSystem.confirmClaim()">${SETTINGS.booking.modalAccept}</button>
+            </div>
+        `;
     }
-    
-    if (contactType === 'tiktok' && !validateTikTokUsername(contactUsername)) {
-        showToast('Invalid TikTok username format', 'error');
-        return;
-    }
-    
-    if (!acceptRules) {
-        showToast('Please accept the booking rules', 'error');
-        return;
-    }
-    
-    // Show loading
-    closeBookingModal();
-    showLoading();
-    
-    setTimeout(() => {
-        // Save booking
+
+    async confirmClaim() {
+        const discord = document.getElementById('golden-discord-final')?.value;
+        const tiktok = document.getElementById('golden-tiktok-final')?.value;
+        const eventDate = document.getElementById('golden-event-final')?.value;
+
+        window.bookingSystem.showLoading(SETTINGS.loading.submitting);
+
+        // Create golden booking
         const booking = {
-            date: selectedDate,
-            username: username,
-            contactType: contactType,
-            contactUsername: contactUsername,
-            status: 'pending',
-            type: 'normal',
-            timestamp: new Date().toISOString()
-        };
-        
-        const bookingsKey = `bookings_${currentUser.username}`;
-        const bookings = JSON.parse(localStorage.getItem(bookingsKey) || '[]');
-        bookings.push(booking);
-        localStorage.setItem(bookingsKey, JSON.stringify(bookings));
-        
-        // Send webhook
-        sendWebhook(webhooks.normalBooking, {
-            username: username,
-            date: selectedDate,
-            contactType: contactType,
-            contactUsername: contactUsername,
-            status: 'PENDING'
-        });
-        
-        hideLoading();
-        showToast('Booking request submitted! Status: PENDING', 'success');
-        
-        // Refresh UI
-        checkUserBookings();
-        updateCalendar();
-    }, 1500);
-}
-
-// Validate Discord Username
-function validateDiscordUsername(username) {
-    // Discord username can contain letters, numbers, underscores, and periods
-    return username.length >= 2 && username.length <= 32;
-}
-
-// Validate TikTok Username
-function validateTikTokUsername(username) {
-    // TikTok username starts with @ and contains letters, numbers, underscores, and periods
-    return username.length >= 2 && username.length <= 24;
-}
-
-// Check Golden Ticket Status
-function checkGoldenTicketStatus() {
-    if (!goldenTicket.enabled) return;
-    
-    const goldenSection = document.getElementById('goldenTicketSection');
-    const winnerBanner = document.getElementById('winnerBanner');
-    
-    // Check if there are any available golden ticket events
-    const availableEvents = Object.keys(goldenTicket.events).filter(date => {
-        const event = goldenTicket.events[date];
-        return !event.completed && event.winner === '';
-    });
-    
-    if (availableEvents.length > 0 && goldenSection) {
-        goldenSection.classList.remove('hidden');
-    }
-    
-    // Check if current user is a winner
-    if (currentUser) {
-        const winnerEvents = Object.keys(goldenTicket.events).filter(date => {
-            const event = goldenTicket.events[date];
-            return event.winner === currentUser.username;
-        });
-        
-        if (winnerEvents.length > 0 && winnerBanner) {
-            winnerBanner.classList.remove('hidden');
-            createConfetti();
-        }
-    }
-}
-
-// Create Confetti
-function createConfetti() {
-    const container = document.querySelector('.confetti-container');
-    if (!container) return;
-    
-    for (let i = 0; i < 50; i++) {
-        const confetti = document.createElement('div');
-        confetti.style.position = 'absolute';
-        confetti.style.width = '10px';
-        confetti.style.height = '10px';
-        confetti.style.backgroundColor = ['#ff6b35', '#ffd700', '#ff8c42', '#764ba2'][Math.floor(Math.random() * 4)];
-        confetti.style.left = Math.random() * 100 + '%';
-        confetti.style.top = '-10px';
-        confetti.style.opacity = Math.random();
-        confetti.style.animation = `float ${2 + Math.random() * 3}s linear infinite`;
-        confetti.style.animationDelay = Math.random() * 2 + 's';
-        container.appendChild(confetti);
-    }
-}
-
-// Start Golden Ticket Flow
-function startGoldenTicketFlow() {
-    const modal = document.getElementById('goldenModal');
-    if (!modal) return;
-    
-    showLoading();
-    
-    setTimeout(() => {
-        hideLoading();
-        
-        // Reset all steps
-        document.getElementById('goldenStep1').classList.remove('hidden');
-        document.getElementById('goldenStep2').classList.add('hidden');
-        document.getElementById('goldenStep3').classList.add('hidden');
-        document.getElementById('goldenStep4').classList.add('hidden');
-        
-        modal.classList.remove('hidden');
-    }, 1000);
-}
-
-// Show Golden Step 2
-function showGoldenStep2() {
-    showLoading();
-    
-    setTimeout(() => {
-        hideLoading();
-        
-        document.getElementById('goldenStep1').classList.add('hidden');
-        document.getElementById('goldenStep2').classList.remove('hidden');
-        
-        // Generate golden calendar
-        generateGoldenCalendar();
-    }, 1500);
-}
-
-// Generate Golden Calendar
-function generateGoldenCalendar() {
-    const calendarElement = document.getElementById('goldenCalendar');
-    if (!calendarElement) return;
-    
-    calendarElement.innerHTML = '';
-    
-    // Get available golden ticket events
-    const availableEvents = Object.keys(goldenTicket.events).filter(date => {
-        const event = goldenTicket.events[date];
-        return !event.completed && event.winner === '';
-    });
-    
-    availableEvents.forEach(date => {
-        const dateElement = document.createElement('div');
-        dateElement.className = 'golden-date';
-        dateElement.textContent = date;
-        
-        dateElement.addEventListener('click', () => {
-            // Remove previous selection
-            document.querySelectorAll('.golden-date').forEach(el => {
-                el.classList.remove('selected');
-            });
-            
-            // Select this date
-            dateElement.classList.add('selected');
-            selectedGoldenDate = date;
-            
-            // Show continue button
-            document.getElementById('goldenContinue2').classList.remove('hidden');
-        });
-        
-        calendarElement.appendChild(dateElement);
-    });
-}
-
-// Show Golden Step 3
-function showGoldenStep3() {
-    if (!selectedGoldenDate) {
-        showToast('Please select a date', 'error');
-        return;
-    }
-    
-    showLoading();
-    
-    setTimeout(() => {
-        hideLoading();
-        
-        document.getElementById('goldenStep2').classList.add('hidden');
-        document.getElementById('goldenStep3').classList.remove('hidden');
-    }, 1000);
-}
-
-// Handle Golden Ticket Confirmation
-function handleGoldenTicketConfirmation() {
-    const contactType = document.getElementById('goldenContactType').value;
-    const contactUsername = document.getElementById('goldenContactUsername').value.trim();
-    const acceptRules = document.getElementById('goldenAcceptRules').checked;
-    
-    // Validation
-    if (!contactType) {
-        showToast('Please select a contact platform', 'error');
-        return;
-    }
-    
-    if (!contactUsername) {
-        showToast('Please enter your contact username', 'error');
-        return;
-    }
-    
-    if (!acceptRules) {
-        showToast('Please accept the rules', 'error');
-        return;
-    }
-    
-    // Show loading
-    showLoading();
-    
-    setTimeout(() => {
-        // Save golden ticket claim
-        const claim = {
-            date: selectedGoldenDate,
-            username: currentUser.username,
-            contactType: contactType,
-            contactUsername: contactUsername,
-            status: 'pending',
+            id: Date.now().toString(),
             type: 'golden',
-            timestamp: new Date().toISOString()
-        };
-        
-        const bookingsKey = `bookings_${currentUser.username}`;
-        const bookings = JSON.parse(localStorage.getItem(bookingsKey) || '[]');
-        bookings.push(claim);
-        localStorage.setItem(bookingsKey, JSON.stringify(bookings));
-        
-        // Add to pending users in golden ticket event
-        if (goldenTicket.events[selectedGoldenDate]) {
-            goldenTicket.events[selectedGoldenDate].pendingUsers.push(currentUser.username);
-        }
-        
-        // Send webhook
-        sendWebhook(webhooks.goldenTicket, {
-            username: currentUser.username,
-            date: selectedGoldenDate,
-            contactType: contactType,
-            contactUsername: contactUsername,
-            status: 'PENDING GOLDEN TICKET',
-            type: 'GOLDEN TICKET CLAIM'
-        });
-        
-        hideLoading();
-        
-        // Show final step
-        document.getElementById('goldenStep3').classList.add('hidden');
-        document.getElementById('goldenStep4').classList.remove('hidden');
-    }, 2000);
-}
-
-// Close Golden Modal
-function closeGoldenModal() {
-    const modal = document.getElementById('goldenModal');
-    if (modal) {
-        modal.classList.add('hidden');
-        
-        // Reset form
-        document.getElementById('goldenContactType').value = '';
-        document.getElementById('goldenContactUsername').value = '';
-        document.getElementById('goldenAcceptRules').checked = false;
-        selectedGoldenDate = null;
-        
-        // Refresh UI
-        checkGoldenTicketStatus();
-    }
-}
-
-// Send Webhook
-async function sendWebhook(webhookUrl, data) {
-    try {
-        const embed = {
-            title: data.type || 'New Booking Request',
-            color: data.type === 'GOLDEN TICKET CLAIM' ? 0xFFD700 : 0xFF6B35,
-            fields: [
-                {
-                    name: 'Username',
-                    value: data.username,
-                    inline: true
-                },
-                {
-                    name: 'Date',
-                    value: data.date,
-                    inline: true
-                },
-                {
-                    name: 'Status',
-                    value: data.status,
-                    inline: true
-                },
-                {
-                    name: 'Contact Type',
-                    value: data.contactType.toUpperCase(),
-                    inline: true
-                },
-                {
-                    name: 'Contact Username',
-                    value: data.contactUsername,
-                    inline: true
-                }
-            ],
-            timestamp: new Date().toISOString(),
-            footer: {
-                text: 'Heide Park Roblox Booking System'
-            }
-        };
-        
-        await fetch(webhookUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
+            date: eventDate,
+            contact: {
+                discord: discord || 'Not provided',
+                tiktok: tiktok || 'Not provided'
             },
-            body: JSON.stringify({
-                embeds: [embed]
-            })
-        });
-    } catch (error) {
-        console.error('Webhook error:', error);
-    }
-}
+            status: 'pending',
+            createdAt: new Date().toISOString(),
+            username: this.currentUser
+        };
 
-// Show Loading
-function showLoading() {
-    const overlay = document.getElementById('loadingOverlay');
-    if (overlay) {
-        overlay.classList.remove('hidden');
-    }
-}
+        // Add to user golden bookings
+        this.userGoldenBookings.push(booking);
+        this.saveUserGoldenBookings();
 
-// Hide Loading
-function hideLoading() {
-    const overlay = document.getElementById('loadingOverlay');
-    if (overlay) {
-        overlay.classList.add('hidden');
-    }
-}
-
-// Show Toast
-function showToast(message, type = 'info') {
-    const container = document.getElementById('toastContainer');
-    if (!container) return;
-    
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
-    
-    container.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.animation = 'slideInRight 0.3s ease reverse';
-        setTimeout(() => {
-            container.removeChild(toast);
-        }, 300);
-    }, 4000);
-}
-
-// Scroll to Booking
-function scrollToBooking() {
-    const bookingSection = document.getElementById('booking');
-    if (bookingSection) {
-        bookingSection.scrollIntoView({ behavior: 'smooth' });
-    }
-}
-
-// Navigation
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('nav-link')) {
-        e.preventDefault();
-        
-        // Remove active class from all links
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.remove('active');
-        });
-        
-        // Add active class to clicked link
-        e.target.classList.add('active');
-        
-        // Scroll to section
-        const href = e.target.getAttribute('href');
-        if (href === '#home') {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else if (href === '#booking') {
-            scrollToBooking();
+        // Add to event pending users
+        SETTINGS.goldenTicket.events[eventDate].pendingUsers.push(this.currentUser);
+        if (window.calendarSystem) {
+            window.calendarSystem.saveToStorage();
         }
+
+        // Send webhook
+        await window.bookingSystem.sendWebhook(booking, 'golden');
+
+        window.bookingSystem.hideLoading();
+        
+        // Show waiting message
+        const content = document.getElementById('modal-content');
+        content.innerHTML = `
+            <div class="modal-body text-center">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--golden); margin: 0 auto 16px;">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+                <h2 class="mb-16">${SETTINGS.golden.modalWaitingTitle}</h2>
+                <p>${SETTINGS.golden.modalWaitingText}</p>
+                <div style="margin-top: 24px;">
+                    <button class="btn-primary" onclick="window.bookingSystem.closeModal()">OK</button>
+                </div>
+            </div>
+        `;
+
+        window.bookingSystem.showNotification('success', SETTINGS.golden.modalWaitingTitle, SETTINGS.golden.modalWaitingText);
     }
+}
+
+// ====== INITIALIZE APP ======
+document.addEventListener('DOMContentLoaded', () => {
+    const app = new App();
+    app.init();
+    window.app = app;
 });
