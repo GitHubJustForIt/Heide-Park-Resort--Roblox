@@ -338,8 +338,8 @@ const SETTINGS = {
         events: {
             "2026-03-12": {
                 pendingUsers: [],
-                winner: "",
-                completed: false,
+                winner: "NimmiLo",
+                completed: true,
                 endTime: "2026-03-12T20:00:00"
             },
             "2026-04-10": {
