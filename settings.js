@@ -336,11 +336,11 @@ const SETTINGS = {
     goldenTicket: {
         enabled: true,
         events: {
-            "2026-03-12": {
+            "2026-04-03": {
                 pendingUsers: [],
                 winner: "NimmiLo",
                 completed: true,
-                endTime: "2026-03-04T19:51:00"
+                endTime: "2026-03-04T19:54:00"
             },
         }
     },
