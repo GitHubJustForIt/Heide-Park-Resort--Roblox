@@ -340,14 +340,8 @@ const SETTINGS = {
                 pendingUsers: [],
                 winner: "NimmiLo",
                 completed: true,
-                endTime: "2026-03-12T20:00:00"
+                endTime: "2026-03-04T19:51:00"
             },
-            "2026-04-10": {
-                pendingUsers: [],
-                winner: "",
-                completed: false,
-                endTime: "2026-04-10T20:00:00"
-            }
         }
     },
 
