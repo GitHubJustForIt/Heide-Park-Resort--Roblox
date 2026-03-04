@@ -94,11 +94,11 @@ const calendarSettings = {
                 enabled: true,
                 bookedUsers: [],
                 pendingUsers: [],
-                soldOut: false
+                soldOut: true
             },
             "18": {
                 enabled: true,
-                bookedUsers: [],
+                bookedUsers: ["NimmiLo"],
                 pendingUsers: [],
                 soldOut: false
             }
