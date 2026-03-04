@@ -1,202 +1,389 @@
-// Settings Configuration File
-// This file contains all configurable settings for the Heide Park Roblox booking system
+// ====== HEIDE PARK ROBLOX - SETTINGS ======
+// All configurable texts and settings
 
-// Fun Facts System
-const funFacts = [
-    "Did you know? Heide Park Roblox has over 25 thrilling attractions!",
-    "Tip: Arrive early to experience the most popular rides with shorter wait times!",
-    "Did you know? Our park opens at 10:00 AM and closes at 10:00 PM!",
-    "Tip: Don't forget to stay hydrated throughout your visit!",
-    "Did you know? We have special VIP experiences available for Golden Ticket winners!",
-    "Tip: Check the weather forecast before your visit to plan accordingly!",
-    "Did you know? Our fastest roller coaster reaches speeds of up to 120 km/h!",
-    "Tip: Download the park map to navigate easily between attractions!",
-    "Did you know? We host special events throughout the year!",
-    "Tip: Booking in advance guarantees your preferred date!",
-    "Did you know? Our park has won multiple awards for best virtual theme park!",
-    "Tip: Follow us on social media for exclusive updates and promotions!",
-    "Did you know? We have family-friendly rides for all ages!",
-    "Tip: Wear comfortable shoes for walking around the park!",
-    "Did you know? Our Golden Ticket is one of the rarest experiences in Roblox!",
-    "Tip: Visit during weekdays for a less crowded experience!",
-    "Did you know? We offer all-inclusive food packages for VIP guests!",
-    "Tip: Make sure to check all the shows scheduled for your visit day!",
-    "Did you know? Our park was inspired by real-world theme parks!",
-    "Tip: Contact information is required for all bookings - Discord or TikTok!"
-];
+const SETTINGS = {
+    // ====== WEBHOOKS ======
+    webhooks: {
+        normal: 'https://discordapp.com/api/webhooks/1473284499931533438/eZnWVr5ohWSBWLMsGSRNtWC5x3EPGHVnl9HsTjZf7pO9Ayhz-OjH7dNiacpB1ZMhauNS',
+        golden: 'https://discordapp.com/api/webhooks/1478765370515914764/MWtoQRSeeujSimtfOBJ8-KOQ7lR7kwd-OCZG1ObXf3tH8FJ-dFqeKwbjG-D3YoJO9JIS'
+    },
 
-// Calendar Settings
-// Configure available dates, bookings, and sold-out dates
-const calendarSettings = {
-    "2026": {
-        "March": {
-            "07": {
-                enabled: true,
-                bookedUsers: [],
-                pendingUsers: [],
-                soldOut: false
-            },
-            "08": {
-                enabled: true,
-                bookedUsers: [],
-                pendingUsers: [],
-                soldOut: false
-            },
-            "09": {
-                enabled: true,
-                bookedUsers: [],
-                pendingUsers: [],
-                soldOut: false
-            },
-            "10": {
-                enabled: true,
-                bookedUsers: [],
-                pendingUsers: [],
-                soldOut: false
-            },
-            "11": {
-                enabled: true,
-                bookedUsers: [],
-                pendingUsers: [],
-                soldOut: false
-            },
-            "12": {
-                enabled: true,
-                bookedUsers: [],
-                pendingUsers: [],
-                soldOut: false
-            },
-            "13": {
-                enabled: true,
-                bookedUsers: [],
-                pendingUsers: [],
-                soldOut: false
-            },
-            "14": {
-                enabled: true,
-                bookedUsers: [],
-                pendingUsers: [],
-                soldOut: false
-            },
-            "15": {
-                enabled: true,
-                bookedUsers: [],
-                pendingUsers: [],
-                soldOut: false
-            },
-            "16": {
-                enabled: true,
-                bookedUsers: [],
-                pendingUsers: [],
-                soldOut: false
-            },
-            "17": {
-                enabled: true,
-                bookedUsers: [],
-                pendingUsers: [],
-                soldOut: true
-            },
-            "18": {
-                enabled: true,
-                bookedUsers: ["NimmiLo"],
-                pendingUsers: [],
-                soldOut: false
-            }
+    // ====== LOGIN PAGE ======
+    login: {
+        title: 'Welcome to Heide Park Roblox',
+        subtitle: 'Please enter your username to continue',
+        inputPlaceholder: 'Enter your username',
+        buttonText: 'Continue',
+        errorEmpty: 'Please enter a username',
+        errorTooShort: 'Username must be at least 3 characters'
+    },
+
+    // ====== NAVIGATION ======
+    nav: {
+        home: 'Home',
+        booking: 'Booking',
+        golden: 'Golden Ticket',
+        myBookings: 'My Reservations',
+        status: 'Status',
+        info: 'Info & Help',
+        logout: 'Logout'
+    },
+
+    // ====== HOME PAGE ======
+    home: {
+        heroTitle1: 'Welcome to Heide Park Roblox',
+        heroSubtitle1: 'Experience the ultimate theme park adventure',
+        heroButton: 'Book Now',
+        
+        goldenTeaserTitle: 'Golden Ticket Available!',
+        goldenTeaserText: 'A legendary experience awaits',
+        goldenButton: 'Claim Now',
+        
+        infoCardBookingTitle: 'Easy Booking',
+        infoCardBookingText: 'Reserve your spot in just a few clicks',
+        infoCardGoldenTitle: 'Golden Tickets',
+        infoCardGoldenText: 'Win exclusive VIP experiences',
+        infoCardSecureTitle: 'Secure & Fast',
+        infoCardSecureText: 'Your reservations are safe with us',
+        
+        newsTitle: 'Latest News'
+    },
+
+    // ====== BOOKING PAGE ======
+    booking: {
+        pageTitle: 'Book Your Visit',
+        selectDate: 'Select a date to continue',
+        
+        filterAll: 'All',
+        filterAvailable: 'Available',
+        filterPending: 'Pending',
+        filterBooked: 'Booked',
+        filterThisMonth: 'This Month',
+        filterNextMonth: 'Next Month',
+        
+        months: ['January', 'February', 'March', 'April', 'May', 'June', 
+                 'July', 'August', 'September', 'October', 'November', 'December'],
+        
+        modalTitle: 'Book for',
+        modalSelectTimeslot: 'Select a time slot',
+        modalContact: 'Contact Information',
+        modalContactHint: 'Please provide either Discord or TikTok',
+        modalDiscordPlaceholder: 'Discord Username',
+        modalTiktokPlaceholder: 'TikTok Username',
+        modalRules: 'Rules & Guidelines',
+        modalRulesText: 'By booking, you agree to follow all park rules and guidelines. Be respectful, arrive on time, and have fun!',
+        modalReview: 'Please review your booking',
+        modalReviewDate: 'Date',
+        modalReviewTimeslot: 'Timeslot',
+        modalReviewContact: 'Contact',
+        modalReviewStatus: 'Status',
+        modalConfirm: 'Confirm Booking',
+        modalCancel: 'Cancel',
+        modalAccept: 'Accept & Continue',
+        
+        successTitle: 'Booking Submitted!',
+        successMessage: 'Your booking request has been submitted and is now pending approval.',
+        successPending: 'Status: Pending',
+        
+        timeslots: {
+            morning: { name: 'Morning', time: '09:00 - 12:00' },
+            noon: { name: 'Noon', time: '12:00 - 15:00' },
+            evening: { name: 'Evening', time: '15:00 - 18:00' },
+            night: { name: 'Night', time: '18:00 - 21:00' }
+        }
+    },
+
+    // ====== GOLDEN TICKET ======
+    golden: {
+        mainTitle: 'Golden Ticket',
+        mainSubtitle: 'A legendary experience awaits you',
+        claimButton: 'Claim Golden Ticket',
+        
+        winnerTitle: '🎉 YOU WON THE GOLDEN TICKET! 🎉',
+        winnerPerks: {
+            access: 'Private Park Access',
+            stay: 'Overnight Stay',
+            support: 'Owner Support',
+            inclusive: 'All Inclusive'
         },
-        "April": {
-            "01": {
-                enabled: true,
-                bookedUsers: [],
-                pendingUsers: [],
-                soldOut: false
+        
+        modalTitle: 'Claim Golden Ticket',
+        modalSelectEvent: 'Select an event date',
+        modalLoading: 'Preparing your claim...',
+        modalClaimTitle: 'Golden Ticket Claim',
+        modalClaimText: 'You are about to claim a legendary golden ticket. Are you ready?',
+        modalClaimButton: 'Yes, Claim It!',
+        modalContact: 'Contact Information',
+        modalRules: 'Golden Ticket Rules',
+        modalRulesText: 'This is a special VIP experience. You will have exclusive access to the park with special privileges. Please be punctual and respectful.',
+        modalReview: 'Review Your Golden Claim',
+        modalWaitingTitle: 'Claim Submitted',
+        modalWaitingText: 'Please wait. The winner will be announced soon.',
+        
+        countdownPrefix: 'Winner in: ',
+        countdownEnded: 'Event Ended',
+        
+        noEventsTitle: 'No Active Events',
+        noEventsText: 'There are currently no golden ticket events available. Check back soon!'
+    },
+
+    // ====== MY BOOKINGS ======
+    myBookings: {
+        pageTitle: 'My Reservations',
+        noBookings: 'You have no reservations yet',
+        noBookingsText: 'Start by booking a visit or claiming a golden ticket!',
+        
+        normalTicket: 'Regular Booking',
+        goldenTicket: 'Golden Ticket',
+        
+        statusPending: 'Pending',
+        statusBooked: 'Confirmed',
+        statusExpired: 'Expired',
+        statusWinner: 'Winner',
+        statusWaiting: 'Waiting'
+    },
+
+    // ====== STATUS PAGE ======
+    status: {
+        pageTitle: 'Booking Status',
+        availableText: 'Dates ready for booking',
+        pendingText: 'Awaiting confirmation',
+        bookedText: 'Successfully reserved',
+        expiredText: 'Reservation has expired',
+        soldoutText: 'No slots available'
+    },
+
+    // ====== INFO PAGE ======
+    info: {
+        pageTitle: 'Information & Help',
+        
+        howToBookTitle: 'How to Book',
+        bookingSteps: [
+            'Navigate to the Booking page',
+            'Select an available date',
+            'Choose your preferred time slot',
+            'Enter your contact information',
+            'Review and confirm your booking'
+        ],
+        
+        rulesTitle: 'Rules & Guidelines',
+        rulesContent: 'Please follow all park rules for a safe and enjoyable experience. Be respectful to staff and other visitors. No inappropriate behavior will be tolerated. Have fun!',
+        
+        privacyTitle: 'Privacy & Rules',
+        privacyDataUsage: 'Data Usage: Your information is only used for booking management and will not be shared with third parties.',
+        privacyFanProject: 'Fan Project: This is a community-driven fan project for Roblox enthusiasts.',
+        privacyNoPayments: 'No Payments: All bookings are completely free. We never ask for payment information.',
+        
+        contactTitle: 'Contact Support',
+        contactText: 'Need help? Reach out to us via Discord or TikTok. Our team is here to assist you with any questions or concerns.'
+    },
+
+    // ====== ERROR MESSAGES ======
+    errors: {
+        dateFull: 'This date is fully booked',
+        contactMissing: 'Please provide contact information',
+        limitReached: 'You have reached the booking limit',
+        tryAnotherDate: 'Please try another date',
+        invalidTimeslot: 'Please select a valid time slot',
+        alreadyBooked: 'You already have a booking for this date',
+        goldenActive: 'You already have an active golden ticket claim',
+        networkError: 'Network error. Please try again.',
+        unknownError: 'An unexpected error occurred'
+    },
+
+    // ====== NOTIFICATIONS ======
+    notifications: {
+        requestReceived: 'Request Received',
+        requestReceivedText: 'Your booking request has been submitted',
+        statusChanged: 'Status Changed',
+        statusChangedText: 'Your booking status has been updated',
+        winnerAnnounced: 'Winner Announced',
+        winnerAnnouncedText: 'The golden ticket winner has been revealed',
+        expired: 'Booking Expired',
+        expiredText: 'Your pending booking has expired',
+        bookingConfirmed: 'Booking Confirmed',
+        bookingConfirmedText: 'Your reservation has been confirmed'
+    },
+
+    // ====== LOADING TEXTS ======
+    loading: {
+        default: 'Loading...',
+        processing: 'Processing your request...',
+        submitting: 'Submitting...',
+        checking: 'Checking availability...',
+        preparing: 'Preparing...'
+    },
+
+    // ====== CALENDAR SETTINGS ======
+    calendarSettings: {
+        "2026": {
+            "March": {
+                "07": {
+                    enabled: true,
+                    bookedUsers: [],
+                    pendingUsers: [],
+                    soldOut: false,
+                    timeslots: {
+                        morning: { enabled: true, limit: 5, bookings: [] },
+                        noon: { enabled: true, limit: 5, bookings: [] },
+                        evening: { enabled: true, limit: 5, bookings: [] },
+                        night: { enabled: false, limit: 0, bookings: [] }
+                    }
+                },
+                "12": {
+                    enabled: true,
+                    bookedUsers: [],
+                    pendingUsers: [],
+                    soldOut: false,
+                    timeslots: {
+                        morning: { enabled: true, limit: 5, bookings: [] },
+                        noon: { enabled: true, limit: 5, bookings: [] },
+                        evening: { enabled: true, limit: 5, bookings: [] },
+                        night: { enabled: true, limit: 3, bookings: [] }
+                    }
+                },
+                "15": {
+                    enabled: true,
+                    bookedUsers: [],
+                    pendingUsers: [],
+                    soldOut: false,
+                    timeslots: {
+                        morning: { enabled: true, limit: 5, bookings: [] },
+                        noon: { enabled: true, limit: 5, bookings: [] },
+                        evening: { enabled: true, limit: 5, bookings: [] },
+                        night: { enabled: false, limit: 0, bookings: [] }
+                    }
+                },
+                "20": {
+                    enabled: true,
+                    bookedUsers: [],
+                    pendingUsers: [],
+                    soldOut: false,
+                    timeslots: {
+                        morning: { enabled: true, limit: 5, bookings: [] },
+                        noon: { enabled: true, limit: 5, bookings: [] },
+                        evening: { enabled: true, limit: 5, bookings: [] },
+                        night: { enabled: true, limit: 3, bookings: [] }
+                    }
+                },
+                "25": {
+                    enabled: true,
+                    bookedUsers: [],
+                    pendingUsers: [],
+                    soldOut: false,
+                    timeslots: {
+                        morning: { enabled: true, limit: 5, bookings: [] },
+                        noon: { enabled: true, limit: 5, bookings: [] },
+                        evening: { enabled: true, limit: 5, bookings: [] },
+                        night: { enabled: false, limit: 0, bookings: [] }
+                    }
+                }
             },
-            "02": {
-                enabled: true,
-                bookedUsers: [],
-                pendingUsers: [],
-                soldOut: false
-            },
-            "03": {
-                enabled: true,
-                bookedUsers: [],
-                pendingUsers: [],
-                soldOut: false
-            },
-            "04": {
-                enabled: true,
-                bookedUsers: [],
-                pendingUsers: [],
-                soldOut: false
-            },
-            "05": {
-                enabled: true,
-                bookedUsers: [],
-                pendingUsers: [],
-                soldOut: false
+            "April": {
+                "05": {
+                    enabled: true,
+                    bookedUsers: [],
+                    pendingUsers: [],
+                    soldOut: false,
+                    timeslots: {
+                        morning: { enabled: true, limit: 5, bookings: [] },
+                        noon: { enabled: true, limit: 5, bookings: [] },
+                        evening: { enabled: true, limit: 5, bookings: [] },
+                        night: { enabled: false, limit: 0, bookings: [] }
+                    }
+                },
+                "10": {
+                    enabled: true,
+                    bookedUsers: [],
+                    pendingUsers: [],
+                    soldOut: false,
+                    timeslots: {
+                        morning: { enabled: true, limit: 5, bookings: [] },
+                        noon: { enabled: true, limit: 5, bookings: [] },
+                        evening: { enabled: true, limit: 5, bookings: [] },
+                        night: { enabled: true, limit: 3, bookings: [] }
+                    }
+                },
+                "18": {
+                    enabled: true,
+                    bookedUsers: [],
+                    pendingUsers: [],
+                    soldOut: false,
+                    timeslots: {
+                        morning: { enabled: true, limit: 5, bookings: [] },
+                        noon: { enabled: true, limit: 5, bookings: [] },
+                        evening: { enabled: true, limit: 5, bookings: [] },
+                        night: { enabled: false, limit: 0, bookings: [] }
+                    }
+                },
+                "24": {
+                    enabled: true,
+                    bookedUsers: [],
+                    pendingUsers: [],
+                    soldOut: false,
+                    timeslots: {
+                        morning: { enabled: true, limit: 5, bookings: [] },
+                        noon: { enabled: true, limit: 5, bookings: [] },
+                        evening: { enabled: true, limit: 5, bookings: [] },
+                        night: { enabled: true, limit: 3, bookings: [] }
+                    }
+                }
             }
         }
     },
-    "2027": {
-        "January": {
-            "15": {
-                enabled: true,
-                bookedUsers: [],
+
+    // ====== GOLDEN TICKET SETTINGS ======
+    goldenTicket: {
+        enabled: true,
+        events: {
+            "2026-03-12": {
                 pendingUsers: [],
-                soldOut: false
+                winner: "",
+                completed: false,
+                endTime: "2026-03-12T20:00:00"
             },
-            "16": {
-                enabled: true,
-                bookedUsers: [],
+            "2026-04-10": {
                 pendingUsers: [],
-                soldOut: false
+                winner: "",
+                completed: false,
+                endTime: "2026-04-10T20:00:00"
             }
         }
-    }
-};
+    },
 
-// Golden Ticket System
-// Configure golden ticket events and winners
-const goldenTicket = {
-    enabled: true, // Set to false to disable golden ticket system
-    events: {
-        "2026-03-12": {
-            pendingUsers: [],
-            winner: "", // Username of the winner (empty = no winner yet)
-            completed: false // Set to true when winner is chosen
+    // ====== GOLDEN COUNTDOWN ======
+    goldenCountdown: {
+        enabled: true,
+        text: 'Winner will be announced soon'
+    },
+
+    // ====== EXPIRY SETTINGS ======
+    expiry: {
+        pendingDays: 7, // Days before pending bookings expire
+        autoCleanup: true
+    },
+
+    // ====== NEWS ITEMS ======
+    news: [
+        {
+            title: 'Spring Season Opens',
+            text: 'Join us for the grand opening of the spring season with special events and attractions!',
+            date: '2026-03-01'
         },
-        "2026-03-15": {
-            pendingUsers: [],
-            winner: "",
-            completed: false
+        {
+            title: 'New Rides Available',
+            text: 'Experience our latest thrilling rides and attractions. Book your visit today!',
+            date: '2026-03-05'
         },
-        "2026-04-01": {
-            pendingUsers: [],
-            winner: "",
-            completed: false
+        {
+            title: 'Golden Ticket Events',
+            text: 'Special golden ticket events are now live. Claim yours for an exclusive VIP experience!',
+            date: '2026-03-10'
         }
-    }
+    ]
 };
 
-// Webhook URLs
-const webhooks = {
-    normalBooking: "https://discordapp.com/api/webhooks/1473284499931533438/eZnWVr5ohWSBWLMsGSRNtWC5x3EPGHVnl9HsTjZf7pO9Ayhz-OjH7dNiacpB1ZMhauNS",
-    goldenTicket: "https://discordapp.com/api/webhooks/1478765370515914764/MWtoQRSeeujSimtfOBJ8-KOQ7lR7kwd-OCZG1ObXf3tH8FJ-dFqeKwbjG-D3YoJO9JIS"
-};
-
-// System Settings
-const systemSettings = {
-    minAge: 8, // Minimum age requirement
-    maxBookingDaysAhead: 14, // Maximum days ahead for booking (2 weeks)
-    visitorCounterStart: 15420 // Starting visitor count
-};
-
-// Export settings for use in script.js
+// Export for use in other scripts
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        funFacts,
-        calendarSettings,
-        goldenTicket,
-        webhooks,
-        systemSettings
-    };
+    module.exports = SETTINGS;
 }
