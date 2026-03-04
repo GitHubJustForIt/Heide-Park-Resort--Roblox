@@ -334,7 +334,7 @@ const SETTINGS = {
 
     // ====== GOLDEN TICKET SETTINGS ======
     goldenTicket: {
-        enabled: true,
+        enabled: false,
         events: {
             "2026-04-03": {
                 pendingUsers: [],
