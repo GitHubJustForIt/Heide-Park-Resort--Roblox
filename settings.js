@@ -1,195 +1,202 @@
-// Settings.js - Data Management for Heide Park Roblox Booking System
+// Settings Configuration File
+// This file contains all configurable settings for the Heide Park Roblox booking system
 
-const HeideParkSettings = {
-    // Default webhook URL (replace with your own)
-    DEFAULT_WEBHOOK_URL: "https://discordapp.com/api/webhooks/1472624952917364998/dLUkhFwa2ZyEhrNbOHfwyRe3ufr8BtwzgH_kcni2fgtugwfaABMOq3vwdPTzfqJ9Q2OE",
+// Fun Facts System
+const funFacts = [
+    "Did you know? Heide Park Roblox has over 25 thrilling attractions!",
+    "Tip: Arrive early to experience the most popular rides with shorter wait times!",
+    "Did you know? Our park opens at 10:00 AM and closes at 10:00 PM!",
+    "Tip: Don't forget to stay hydrated throughout your visit!",
+    "Did you know? We have special VIP experiences available for Golden Ticket winners!",
+    "Tip: Check the weather forecast before your visit to plan accordingly!",
+    "Did you know? Our fastest roller coaster reaches speeds of up to 120 km/h!",
+    "Tip: Download the park map to navigate easily between attractions!",
+    "Did you know? We host special events throughout the year!",
+    "Tip: Booking in advance guarantees your preferred date!",
+    "Did you know? Our park has won multiple awards for best virtual theme park!",
+    "Tip: Follow us on social media for exclusive updates and promotions!",
+    "Did you know? We have family-friendly rides for all ages!",
+    "Tip: Wear comfortable shoes for walking around the park!",
+    "Did you know? Our Golden Ticket is one of the rarest experiences in Roblox!",
+    "Tip: Visit during weekdays for a less crowded experience!",
+    "Did you know? We offer all-inclusive food packages for VIP guests!",
+    "Tip: Make sure to check all the shows scheduled for your visit day!",
+    "Did you know? Our park was inspired by real-world theme parks!",
+    "Tip: Contact information is required for all bookings - Discord or TikTok!"
+];
 
-    // Get settings from localStorage
-    getSettings() {
-        const stored = localStorage.getItem("heidepark_settings");
-        if (stored) {
-            return JSON.parse(stored);
-        }
-
-        const defaultSettings = {
-            maxSlotsPerDay: 4,
-            webhookUrl: this.DEFAULT_WEBHOOK_URL,
-            closedDays: []
-        };
-
-        localStorage.setItem("heidepark_settings", JSON.stringify(defaultSettings));
-        return defaultSettings;
-    },
-
-    // Save settings to localStorage
-    saveSettings(settings) {
-        localStorage.setItem("heidepark_settings", JSON.stringify(settings));
-    },
-
-    // Get all bookings from localStorage
-    getBookings() {
-        const stored = localStorage.getItem("heidepark_bookings");
-        if (stored) {
-            return JSON.parse(stored);
-        }
-        return [];
-    },
-
-    // Save bookings to localStorage
-    saveBookings(bookings) {
-        localStorage.setItem("heidepark_bookings", JSON.stringify(bookings));
-    },
-
-    // Add a new booking
-    addBooking(username, date) {
-        const bookings = this.getBookings();
-        const settings = this.getSettings();
-
-        // Check if user already booked this date
-        if (bookings.some(b => b.username === username && b.date === date)) {
-            return false;
-        }
-
-        // Check if day is full
-        const dayBookings = bookings.filter(b => b.date === date);
-        if (dayBookings.length >= settings.maxSlotsPerDay) {
-            return false;
-        }
-
-        bookings.push({
-            username: username,
-            date: date,
-            timestamp: Date.now()
-        });
-
-        this.saveBookings(bookings);
-        return true;
-    },
-
-    // Check if user has booked for a specific date
-    hasUserBookedDate(username, date) {
-        const bookings = this.getBookings();
-        return bookings.some(b => b.username === username && b.date === date);
-    },
-
-    // Check if user has any booking
-    hasUserAnyBooking(username) {
-        const bookings = this.getBookings();
-        return bookings.some(b => b.username === username);
-    },
-
-    // Get bookings count for a date
-    getBookingsCountForDate(date) {
-        const bookings = this.getBookings();
-        return bookings.filter(b => b.date === date).length;
-    },
-
-    // Send booking to Discord webhook
-    async sendToDiscordWebhook(username, date) {
-        const settings = this.getSettings();
-
-        if (!settings.webhookUrl || settings.webhookUrl === this.DEFAULT_WEBHOOK_URL) {
-            console.log("Webhook not configured, skipping Discord notification");
-            return true;
-        }
-
-        try {
-            const formattedDate = new Date(date).toLocaleDateString("en-US", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric"
-            });
-
-            const response = await fetch(settings.webhookUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    embeds: [{
-                        title: "🎢 New Heide Park Roblox Booking",
-                        color: 16744192, // Orange color
-                        fields: [
-                            {
-                                name: "Username",
-                                value: username,
-                                inline: true
-                            },
-                            {
-                                name: "Date",
-                                value: formattedDate,
-                                inline: true
-                            },
-                            {
-                                name: "Booking Time",
-                                value: new Date().toLocaleString("en-US"),
-                                inline: false
-                            }
-                        ],
-                        footer: {
-                            text: "Heide Park Roblox Reservation System"
-                        },
-                        timestamp: new Date().toISOString()
-                    }]
-                })
-            });
-
-            return response.ok;
-        } catch (error) {
-            console.error("Failed to send Discord webhook:", error);
-            return false;
+// Calendar Settings
+// Configure available dates, bookings, and sold-out dates
+const calendarSettings = {
+    "2026": {
+        "March": {
+            "07": {
+                enabled: true,
+                bookedUsers: [],
+                pendingUsers: [],
+                soldOut: false
+            },
+            "08": {
+                enabled: true,
+                bookedUsers: [],
+                pendingUsers: [],
+                soldOut: false
+            },
+            "09": {
+                enabled: true,
+                bookedUsers: [],
+                pendingUsers: [],
+                soldOut: false
+            },
+            "10": {
+                enabled: true,
+                bookedUsers: [],
+                pendingUsers: [],
+                soldOut: false
+            },
+            "11": {
+                enabled: true,
+                bookedUsers: [],
+                pendingUsers: [],
+                soldOut: false
+            },
+            "12": {
+                enabled: true,
+                bookedUsers: [],
+                pendingUsers: [],
+                soldOut: false
+            },
+            "13": {
+                enabled: true,
+                bookedUsers: [],
+                pendingUsers: [],
+                soldOut: false
+            },
+            "14": {
+                enabled: true,
+                bookedUsers: [],
+                pendingUsers: [],
+                soldOut: false
+            },
+            "15": {
+                enabled: true,
+                bookedUsers: [],
+                pendingUsers: [],
+                soldOut: false
+            },
+            "16": {
+                enabled: true,
+                bookedUsers: [],
+                pendingUsers: [],
+                soldOut: false
+            },
+            "17": {
+                enabled: true,
+                bookedUsers: [],
+                pendingUsers: [],
+                soldOut: false
+            },
+            "18": {
+                enabled: true,
+                bookedUsers: [],
+                pendingUsers: [],
+                soldOut: false
+            }
+        },
+        "April": {
+            "01": {
+                enabled: true,
+                bookedUsers: [],
+                pendingUsers: [],
+                soldOut: false
+            },
+            "02": {
+                enabled: true,
+                bookedUsers: [],
+                pendingUsers: [],
+                soldOut: false
+            },
+            "03": {
+                enabled: true,
+                bookedUsers: [],
+                pendingUsers: [],
+                soldOut: false
+            },
+            "04": {
+                enabled: true,
+                bookedUsers: [],
+                pendingUsers: [],
+                soldOut: false
+            },
+            "05": {
+                enabled: true,
+                bookedUsers: [],
+                pendingUsers: [],
+                soldOut: false
+            }
         }
     },
-
-    // Clear old bookings (past dates)
-    clearOldBookings() {
-        const bookings = this.getBookings();
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        const validBookings = bookings.filter(b => {
-            const bookingDate = new Date(b.date);
-            return bookingDate >= today;
-        });
-
-        this.saveBookings(validBookings);
-    },
-
-    // Delete a booking (admin function)
-    deleteBooking(username, date) {
-        const bookings = this.getBookings();
-        const filtered = bookings.filter(b => !(b.username === username && b.date === date));
-
-        if (filtered.length < bookings.length) {
-            this.saveBookings(filtered);
-            return true;
+    "2027": {
+        "January": {
+            "15": {
+                enabled: true,
+                bookedUsers: [],
+                pendingUsers: [],
+                soldOut: false
+            },
+            "16": {
+                enabled: true,
+                bookedUsers: [],
+                pendingUsers: [],
+                soldOut: false
+            }
         }
-
-        return false;
-    },
-
-    // Get user's current login
-    getUserLogin() {
-        const stored = localStorage.getItem("heidepark_user");
-        if (stored) {
-            return JSON.parse(stored);
-        }
-        return null;
-    },
-
-    // Save user login
-    saveUserLogin(username, age) {
-        const login = {
-            username: username,
-            age: age,
-            loginTime: Date.now()
-        };
-        localStorage.setItem("heidepark_user", JSON.stringify(login));
-    },
-
-    // Clear user login
-    clearUserLogin() {
-        localStorage.removeItem("heidepark_user");
     }
 };
+
+// Golden Ticket System
+// Configure golden ticket events and winners
+const goldenTicket = {
+    enabled: true, // Set to false to disable golden ticket system
+    events: {
+        "2026-03-12": {
+            pendingUsers: [],
+            winner: "", // Username of the winner (empty = no winner yet)
+            completed: false // Set to true when winner is chosen
+        },
+        "2026-03-15": {
+            pendingUsers: [],
+            winner: "",
+            completed: false
+        },
+        "2026-04-01": {
+            pendingUsers: [],
+            winner: "",
+            completed: false
+        }
+    }
+};
+
+// Webhook URLs
+const webhooks = {
+    normalBooking: "https://discordapp.com/api/webhooks/1473284499931533438/eZnWVr5ohWSBWLMsGSRNtWC5x3EPGHVnl9HsTjZf7pO9Ayhz-OjH7dNiacpB1ZMhauNS",
+    goldenTicket: "https://discordapp.com/api/webhooks/1478765370515914764/MWtoQRSeeujSimtfOBJ8-KOQ7lR7kwd-OCZG1ObXf3tH8FJ-dFqeKwbjG-D3YoJO9JIS"
+};
+
+// System Settings
+const systemSettings = {
+    minAge: 8, // Minimum age requirement
+    maxBookingDaysAhead: 14, // Maximum days ahead for booking (2 weeks)
+    visitorCounterStart: 15420 // Starting visitor count
+};
+
+// Export settings for use in script.js
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        funFacts,
+        calendarSettings,
+        goldenTicket,
+        webhooks,
+        systemSettings
+    };
+}
